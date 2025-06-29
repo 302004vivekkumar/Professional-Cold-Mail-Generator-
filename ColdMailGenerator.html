@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Cold Email Generator</title>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.1rem;
+        }
+
+        /* Dark Mode Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 1000;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.3);
+            transition: 0.3s;
+            border-radius: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background: rgba(0,0,0,0.4);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+
+        /* Form Styles */
+        .form-card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .form-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .tone-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .tone-option {
+            position: relative;
+        }
+
+        .tone-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .tone-option label {
+            display: block;
+            padding: 1rem;
+            text-align: center;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            font-weight: 500;
+        }
+
+        .tone-option input[type="radio"]:checked + label {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .generate-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.2rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Result Section */
+        .result-card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .result-header h2 {
+            color: #374151;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .email-preview {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 1.5rem;
+            font-family: 'Georgia', serif;
+            line-height: 1.7;
+            white-space: pre-line;
+            margin-bottom: 1.5rem;
+            min-height: 300px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 0.8rem 1.5rem;
+            border: 2px solid #667eea;
+            background: transparent;
+            color: #667eea;
+            border-radius: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .action-btn.primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .action-btn.primary:hover {
+            background: #5a67d8;
+        }
+
+        /* Dark Mode */
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        body.dark-mode .header h1 {
+            color: #f1f5f9;
+        }
+
+        body.dark-mode .header p {
+            color: rgba(241, 245, 249, 0.8);
+        }
+
+        body.dark-mode .form-card,
+        body.dark-mode .result-card {
+            background: rgba(30, 41, 59, 0.9);
+            backdrop-filter: blur(20px);
+        }
+
+        body.dark-mode .form-group label,
+        body.dark-mode .result-header h2 {
+            color: #f1f5f9;
+        }
+
+        body.dark-mode .form-group input,
+        body.dark-mode .form-group textarea,
+        body.dark-mode .form-group select,
+        body.dark-mode .tone-option label {
+            background: #374151;
+            border-color: #4b5563;
+            color: #f1f5f9;
+        }
+
+        body.dark-mode .email-preview {
+            background: #374151;
+            border-color: #4b5563;
+            color: #f1f5f9;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .theme-toggle {
+                top: 1rem;
+                right: 1rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .tone-selector {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-toggle">
+        <label class="toggle-switch">
+            <input type="checkbox" id="darkModeToggle">
+            <span class="slider"></span>
+        </label>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>Cold Email Generator</h1>
+            <p>Create professional emails that get responses</p>
+        </div>
+
+        <div class="form-card">
+            <form id="emailForm" class="form-grid">
+                <div class="form-group">
+                    <label for="yourName">Your Name</label>
+                    <input type="text" id="yourName" placeholder="Enter your full name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="recipientName">Recipient's Name</label>
+                    <input type="text" id="recipientName" placeholder="Enter recipient's name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="companyName">Company Name</label>
+                    <input type="text" id="companyName" placeholder="Enter company name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="role">Role/Position</label>
+                    <input type="text" id="role" placeholder="e.g., Software Developer, Marketing Manager" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="skills">Your Skills & Achievements</label>
+                    <textarea id="skills" rows="3" placeholder="Describe your relevant skills and key achievements..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="reason">Reason for Reaching Out</label>
+                    <textarea id="reason" rows="3" placeholder="Why are you interested in this opportunity? What value can you bring?" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Choose Your Tone</label>
+                    <div class="tone-selector">
+                        <div class="tone-option">
+                            <input type="radio" id="formal" name="tone" value="formal" checked>
+                            <label for="formal">Formal</label>
+                        </div>
+                        <div class="tone-option">
+                            <input type="radio" id="friendly" name="tone" value="friendly">
+                            <label for="friendly">Friendly</label>
+                        </div>
+                        <div class="tone-option">
+                            <input type="radio" id="bold" name="tone" value="bold">
+                            <label for="bold">Bold</label>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="generate-btn">Generate Professional Email</button>
+            </form>
+        </div>
+
+        <div class="result-card" id="resultCard">
+            <div class="result-header">
+                <h2>Your Generated Email</h2>
+            </div>
+            <div class="email-preview" id="emailPreview"></div>
+            <div class="action-buttons">
+                <button class="action-btn primary" onclick="copyEmail()">Copy to Clipboard</button>
+                <button class="action-btn" onclick="downloadEmail()">Download as Text</button>
+                <button class="action-btn" onclick="generateNew()">Generate New Email</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dark mode toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            darkModeToggle.addEventListener('change', function() {
+                document.body.classList.toggle('dark-mode');
+            });
+        });
+
+        // Wait for page to load before adding event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Email generation
+            document.getElementById('emailForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form values
+                const yourName = document.getElementById('yourName').value.trim();
+                const recipientName = document.getElementById('recipientName').value.trim();
+                const companyName = document.getElementById('companyName').value.trim();
+                const role = document.getElementById('role').value.trim();
+                const skills = document.getElementById('skills').value.trim();
+                const reason = document.getElementById('reason').value.trim();
+                const tone = document.querySelector('input[name="tone"]:checked').value;
+
+                // Check if all fields are filled
+                if (!yourName || !recipientName || !companyName || !role || !skills || !reason) {
+                    alert('Please fill in all fields before generating the email.');
+                    return;
+                }
+
+                // Generate email based on tone
+                let email = generateEmail(tone, yourName, recipientName, companyName, role, skills, reason);
+                
+                // Display the email
+                document.getElementById('emailPreview').textContent = email;
+                document.getElementById('resultCard').style.display = 'block';
+                
+                // Scroll to result
+                document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        function generateEmail(tone, yourName, recipientName, companyName, role, skills, reason) {
+            const templates = {
+                formal: `Subject: Application for ${role} Position at ${companyName}
+
+Dear ${recipientName},
+
+I hope this message finds you well. My name is ${yourName}, and I am writing to express my sincere interest in the ${role} position at ${companyName}.
+
+With my extensive experience in ${skills}, I am confident in my ability to contribute meaningfully to your team and help drive ${companyName}'s continued success.
+
+${reason}
+
+I would welcome the opportunity to discuss how my background and enthusiasm can benefit your organization. Thank you for considering my application, and I look forward to hearing from you.
+
+Best regards,
+${yourName}`,
+
+                friendly: `Subject: Excited about the ${role} opportunity at ${companyName}!
+
+Hi ${recipientName},
+
+Hope you're having a great day! I'm ${yourName}, and I came across the ${role} opening at ${companyName} – it really caught my attention!
+
+I've been working with ${skills}, and I'm genuinely excited about the possibility of bringing my experience to your awesome team at ${companyName}.
+
+${reason}
+
+Would love to chat more about this opportunity. Thanks for your time!
+
+Best,
+${yourName}`,
+
+                bold: `Subject: Ready to make an impact as your next ${role}
+
+Hello ${recipientName},
+
+I'm ${yourName}, and I'm confident I'm exactly what ${companyName} needs for the ${role} position.
+
+My proven track record with ${skills} positions me to jump in and deliver results from day one. I don't just meet expectations – I exceed them.
+
+${reason}
+
+Let's schedule a conversation. I'm ready to show you what I can do for ${companyName}.
+
+${yourName}`
+            };
+
+            return templates[tone];
+        }
+
+        function copyEmail() {
+            const emailText = document.getElementById('emailPreview').textContent;
+            navigator.clipboard.writeText(emailText).then(function() {
+                // Visual feedback
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                btn.style.background = '#10b981';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '#667eea';
+                }, 2000);
+            });
+        }
+
+        function downloadEmail() {
+            const emailText = document.getElementById('emailPreview').textContent;
+            const blob = new Blob([emailText], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'cold_email.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        function generateNew() {
+            document.getElementById('emailForm').reset();
+            document.getElementById('resultCard').style.display = 'none';
+            document.querySelector('input[name="tone"][value="formal"]').checked = true;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
